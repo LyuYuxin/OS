@@ -2,38 +2,24 @@
 #include<string>
 #include<map>
 #include<vector>
-
 #define PRIORITY_NUM 3
 #define RUNNING 0
 #define READY 1
 #define BLOCKED 2
-
-//operation types
-#define INIT 0
-#define CREATE 1
-#define DELETE 2
-#define REQUEST 3
-#define RELEASE 4
-#define TIME_OUT 5
-#define LIST_READY 6
-#define LIST_BLOCKED 7
-#define LIST_AVAILABLE_RESOURCES 8
-#define PRINT_PCB 9
-#define EXIT 10
-#define CUR_PROCESS 11
-#define WRONG_INPUT 12
+const int WRONG_INPUT = -1;
 
 //guide information for schedulers
 //-----------------------------
-#define RACE_TO_CONTROL -4 //抢占当前进程
-#define LET_NEXT_PROCESS_RUN -5//直接令下一个优先级最高的进程执行
-#define POSSIBLE_RACE_CONTROL -6//可能抢占
+#define RACE_TO_CONTROL 0//抢占当前进程
+#define LET_NEXT_PROCESS_RUN 1//直接令下一个优先级最高的进程执行
+#define POSSIBLE_RACE_CONTROL 2//可能抢占
+const int TIME_OUT = 3;
 //------------------------------
 
 //about request operation
-#define REQUEST_BLOCKED -2
 #define REQUEST_SATIABLE 0
 #define REQUEST_TOO_MUCH -1
+#define REQUEST_BLOCKED -2
 
 //about release operation
 #define RELEASE_TOO_MUCH -3
@@ -42,11 +28,13 @@
 
 using namespace std;
 
+
 class RCB;
 class PCB;
 class pcbManager;
 class rcbManager;
 class Manager;
+typedef string (Manager::*CommandType)(const vector<string> &);
 
 typedef struct SresourcesUseInformation{
     int num;
@@ -135,26 +123,36 @@ class Manager{
     public:
     Manager(const pcbManager &pcbM,const rcbManager &rcbM);
 
-    string interface(int operationType,const vector<string> &strs, size_t strNum);
+    string interface(CommandType command, const vector<string> &strs);
 
-    void scheduler();
+	CommandType getCom(const string& str);
 
+private:
 	PCB* findHighestPriorityProcess();
+	
+	void scheduler(int operationInformation);
 
-    private:
-	string release(const vector<string> &strs, int &status);
+	string init(const vector<string>& strs);
 
-    string timeOut();
+	string creat(const vector<string>& strs);
 
-	string request(const vector<string> &strs, int &status);
+	string deletethem(const vector<string>& strs);
 
-	string deletethem(const vector<string>& strs,int &status);
+	string release(const vector<string> &strs);
 
-	string listReady();
+	string request(const vector<string> &strs);
 
-	string listBlock();
+    string timeOut(const vector<string> &strs);
 
-	string listAvailableResources();
+	string list(const vector<string> &strs);
+
+	string listReady(const vector<string> &strs);
+
+	string listBlock(const vector<string> &strs);
+
+	string listAvailableResources(const vector<string> &strs);
+
+	string curProcess(const vector<string> &strs);
 
 	string printPCB(const vector<string> &);
 
@@ -162,5 +160,5 @@ class Manager{
 
     pcbManager m_pmanager;
     rcbManager m_rmanager;
-    int m_operation_information = 0;//to tell scheduler what to do
+	map<string, CommandType> m_register;
 };

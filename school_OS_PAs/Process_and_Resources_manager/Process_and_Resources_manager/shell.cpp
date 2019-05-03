@@ -5,37 +5,12 @@
 #include<sstream>
 using namespace std;
 
-Shell::Shell(const Manager &m):manager(m){}
+Shell::Shell(const Manager &m):m_manager(m){}
 
-int Shell::recongnizeInput(const vector<string> &strs){
-	vector<string> normalizedInput = { "init", "cr", "de", "req", "rel",
-	"to", "list", "pr", "exit", "cur" };
-	vector<string> listCom = { "ready", "block", "res" };
-	for (int i = 0; i != 10; i++)
-	{
-		if (strs[0] == normalizedInput[i] && i < 6)
-		{
-			return i;	
-		}
-		else if (strs[0] == normalizedInput[i] && i == 6)
-		{
-			for (int j = 0; j != 3; j++)
-			{
-				if (strs[1] == listCom[j])
-				{
-					return i + j;
-				}
-			}
-			return WRONG_INPUT;
-		}
-		else if(strs[0] == normalizedInput[i] && i > 6)
-		{
-			return i + 2;
-		}
-
-	}
-	return WRONG_INPUT;
-
+CommandType
+Shell::recongnizeInput(const vector<string> &strs){
+	CommandType com = m_manager.getCom(strs[0]);
+	return com;
 }
 
 string Shell::getInput(){
@@ -46,8 +21,8 @@ string Shell::getInput(){
 	return input;
 }
 
-string Shell::callManager(int operationType,const vector<string> &strs, size_t strNum){
-    return manager.interface(operationType, strs, strNum);
+string Shell::callManager(CommandType command, const vector<string> &strs){
+    return m_manager.interface(command, strs);
 }
 
 vector<string> Shell::splitStr(string &str, const char pattern){
@@ -60,4 +35,20 @@ vector<string> Shell::splitStr(string &str, const char pattern){
 	}
 	
 	return splitedStr;
+}
+
+void
+Shell::processCom()
+{
+
+	string input = getInput();
+	if (!input.size())return;
+	vector<string> coms;
+	coms = splitStr(input);
+
+	string output;
+	CommandType command =  recongnizeInput(coms);//recongize input type
+	if (!command)output = "Wrong input!";
+	else output = callManager(command, coms);
+	cout << output << endl;
 }

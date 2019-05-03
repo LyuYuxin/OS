@@ -1,0 +1,5 @@
+﻿  manager.cpp
+d:\vs mysrc\lyuyuxin\os\school_os_pas\process_and_resources_manager\process_and_resources_manager\manager.cpp(331): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\vs mysrc\lyuyuxin\os\school_os_pas\process_and_resources_manager\process_and_resources_manager\manager.cpp(425): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+d:\vs mysrc\lyuyuxin\os\school_os_pas\process_and_resources_manager\process_and_resources_manager\manager.cpp(635): warning C4715: “Manager::getCom”: 不是所有的控件路径都返回值
+  Process_and_Resources_manager.vcxproj -> D:\VS mysrc\LyuYuxin\OS\school_OS_PAs\Process_and_Resources_manager\x64\Debug\Process_and_Resources_manager.exe
